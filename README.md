@@ -17,14 +17,17 @@ I will go back to specific Volatility-plugins to fill the gap when I will dump t
 ### Callbacks 
 * After running `callbacks` plugin on the memory sample we can see strange module-name appear: `00004A2A`.<br>
 <img src="./Images/callbacks.png">
+
 * The callbacks used by this module are: `PsCreateThreadNotifyRoutine` which can be used track and to notify the Driver whenever new Thread is created or terminated in the system.
 
 ### Dump the driver
 * After finding indicator of suspicious module we can dump it and try finding it's logic using IDA.
 * Let's find the base address of the module by it's name using `modscan` plugins and `grep`:<br>
 <img src="./Images/modscan_00004A2A.png">
+
 * We can use `moddump` to dump the module and perform further analysis using IDA:<br>
 <img src="./Images/modscan_00004A2A.png">
+
 * After dumping the module we should rebasing the driver address layout as it was when it was running when the memory dump was taken.
 * Now we can load the module into IDA and perform rebasing to whole the module:<br>
 <img src="./Images/ida_rebasing.png">
@@ -35,18 +38,23 @@ I will go back to specific Volatility-plugins to fill the gap when I will dump t
 * The reversing process will be very difficult because IDA won't recognized any import functions used by the module, because the `IAT` is "broken"
 * We can use a another Volatility plugin to  to recover the IAT using volatility `impscan` plugin:<br>
 <img src="./Images/impscan_00004A2A.png">
+
 * The output is very useful for our mission:
   * IAT - represent address from the IAT directory of the module when is was running
   * Function - The name of the import-function used in this address.
 * I was writing simple script using Python to convert the output of `impscan` to useful `IDC` script which we can use in IDA:<br>
 <img src="./Images/impscan_to_idc.png">
+
 * The script can be used as follow: `impscam_to_idc.py <iat_dump> <recovery_output>`
 * Let's look at the output (`IDC` script):<br>
 <img src="./Images/iat_recovery_idc.png">
+
 * Let's load the output script and fix the IAT of the module:<br>
 <img src="./Images/loading_iat_recovery_script.png">
+
 * Now we can see the recovered IAT and we can continue examining the module:<br>
 <img src="./Images/recoverd_iat.png">
+
 * Now IDA can provide us all the useful features, such as XRefs, etc.
 
 ### Using the recovered imports
