@@ -31,6 +31,7 @@ I will go back to specific Volatility-plugins to fill the gap when I will dump t
 * After dumping the module we should rebasing the driver address layout as it was when it was running when the memory dump was taken.
 * Now we can load the module into IDA and perform rebasing to whole the module:<br>
 <img src="./Images/ida_rebasing.png">
+
 * Now we can start disassembling the module and search for more insights 💪✌️
 
 ### One more thing: IAT recovery 
